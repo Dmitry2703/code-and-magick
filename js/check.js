@@ -15,7 +15,7 @@ function getMessage(a, b) {
     for (var i = 0; i < a.length; i++) {
       sum += a[i];
     }
-    string = 'Я прошел ' + sum + ' шаг' + makeRightEnding(sum);
+    string = 'Я прошёл ' + sum + ' шаг' + makeRightEnding(sum);
   };
   if ((typeof a == 'object') && (typeof b == 'object')) {
     var length = 0;
@@ -23,7 +23,7 @@ function getMessage(a, b) {
     for (i = 0; i < min; i++) {
       length += a[i]*b[i];
     }
-    string = 'Я прошел ' + length + ' метр' + makeRightEnding(length);
+    string = 'Я прошёл ' + length + ' метр' + makeRightEnding(length);
   }
   return string;
 };
