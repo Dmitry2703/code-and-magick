@@ -374,6 +374,42 @@
       }
     },
 
+    _drawMessage: function(top, left, width, height, text) {
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fillRect(left + 10, top + 10, width, height);
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.fillRect(left, top, width, height);
+      this.ctx.fillStyle = '#000000';
+      this.ctx.font = '16px PT Mono';
+
+      // Преобразование введенной строки текста в массив
+      var textArray = text.split(" ");
+
+      // Добавление к каждому элементу массива пробела
+      for (var i = 0; i < textArray.length; i++) {
+        textArray[i] += ' ';
+      };
+
+      // Рисуем текст, пока не закончится строчка
+      var resultString = '';
+      var currentWidth = 0;
+      for (i = 0; i < textArray.length; i++) {
+        while (currentWidth < (width - 40)) {
+          resultString += textArray[i];
+          currentWidth += this.ctx.measureText(textArray[i]).width;
+          i++;
+        };
+
+        // Отрисовка текста на одной строчке
+        this.ctx.fillText(resultString, left + 20, top + 30);
+        top += 20;
+        currentWidth = 0;
+        resultString = '';
+        i--;
+      };
+
+    },
+
     /**
      * Отрисовка экрана паузы.
      */
@@ -381,15 +417,19 @@
       switch (this.state.currentStatus) {
         case Verdict.WIN:
           console.log('you have won!');
+          this._drawMessage(75, 310, 300, 150, 'Поздравляем! Уровень пройден успешно. Для продолжения игры нажмите пробел.');
           break;
         case Verdict.FAIL:
           console.log('you have failed!');
+          this._drawMessage(75, 310, 300, 150);
           break;
         case Verdict.PAUSE:
           console.log('game is on pause!');
+          this._drawMessage(75, 310, 300, 150);
           break;
         case Verdict.INTRO:
           console.log('welcome to the game! Press Space to start');
+          this._drawMessage(75, 310, 300, 150, 'Я умею ходить вперед-назад и летать! Нажимай на стрелки! А еще я стреляю файрболом. Нажимай на shift!');
           break;
       }
     },
