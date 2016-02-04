@@ -374,11 +374,20 @@
       }
     },
 
-    _drawMessage: function(top, left, width, height, text) {
+    _drawMessage: function(text, parameters) {
+      // Если не заданы параметры, то используются параметры по умолчанию
+      if (parameters == undefined) {
+        parameters = {
+          top: 75,
+          left: 310,
+          width: 300,
+          height: 150
+        };
+      }
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      this.ctx.fillRect(left + 10, top + 10, width, height);
+      this.ctx.fillRect(parameters.left + 10, parameters.top + 10, parameters.width, parameters.height);
       this.ctx.fillStyle = '#FFFFFF';
-      this.ctx.fillRect(left, top, width, height);
+      this.ctx.fillRect(parameters.left, parameters.top, parameters.width, parameters.height);
       this.ctx.fillStyle = '#000000';
       this.ctx.font = 'bold 16px PT Mono';
 
@@ -387,17 +396,19 @@
 
       // Отрисовка текста на одной строчке
       var currentWidth = 0;
+      var spaceWidth = this.ctx.measureText(' ').width;
       for (var i = 0; i < textArray.length; i++) {
-        currentWidth += this.ctx.measureText(textArray[i] + ' ').width;
+        currentWidth += this.ctx.measureText(textArray[i]).width;
         // Рисуем текст, пока он влазит в ширину прямоугольника
-        if (currentWidth < (width - 40)) {
-          this.ctx.fillText(textArray[i], left + 20 + currentWidth - this.ctx.measureText(textArray[i]).width, top + 30);
+        if (currentWidth < (parameters.width - 40)) {
+          this.ctx.fillText(textArray[i], parameters.left + 20 + currentWidth - this.ctx.measureText(textArray[i]).width, parameters.top + 30);
         } else {
           // Переход на следующую строчку
-          top += 20;
-          currentWidth = 0;
-          i--;
+          parameters.top += 20;
+          this.ctx.fillText(textArray[i], parameters.left + 20, parameters.top + 30);
+          currentWidth = this.ctx.measureText(textArray[i]).width;
         }
+        currentWidth += spaceWidth;
       }
     },
 
@@ -407,16 +418,16 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          this._drawMessage(75, 310, 300, 150, 'Поздравляем! Уровень пройден успешно. Для продолжения игры нажмите пробел.');
+          this._drawMessage('Поздравляем! Уровень пройден успешно. Для продолжения игры нажмите пробел.');
           break;
         case Verdict.FAIL:
-          this._drawMessage(75, 310, 300, 150, 'К сожалению, вы проиграли... Нажмите пробел для рестарта.');
+          this._drawMessage('К сожалению, вы проиграли... Нажмите пробел для рестарта.');
           break;
         case Verdict.PAUSE:
-          this._drawMessage(75, 310, 300, 150, 'Вы поставили игру на паузу. Для возобновления игры нажмите пробел.');
+          this._drawMessage('Вы поставили игру на паузу. Для возобновления игры нажмите пробел.');
           break;
         case Verdict.INTRO:
-          this._drawMessage(75, 310, 300, 150, 'Я умею ходить вперед-назад и летать! Нажимай на стрелки! А еще я стреляю файрболом. Нажимай на shift!');
+          this._drawMessage('Я умею ходить вперед-назад и летать! Нажимай на стрелки! А еще я стреляю файрболом. Нажимай на shift!');
           break;
       }
     },
