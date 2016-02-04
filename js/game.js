@@ -376,7 +376,7 @@
 
     _drawMessage: function(text, parameters) {
       // Если не заданы параметры, то используются параметры по умолчанию
-      if (parameters == undefined) {
+      if (typeof (parameters) === 'undefined') {
         parameters = {
           top: 75,
           left: 310,
