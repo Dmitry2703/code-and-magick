@@ -374,22 +374,60 @@
       }
     },
 
+    _drawMessage: function(text, parameters) {
+      // Если не заданы параметры, то используются параметры по умолчанию
+      if (typeof (parameters) === 'undefined') {
+        parameters = {
+          top: 75,
+          left: 310,
+          width: 300,
+          height: 150
+        };
+      }
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fillRect(parameters.left + 10, parameters.top + 10, parameters.width, parameters.height);
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.fillRect(parameters.left, parameters.top, parameters.width, parameters.height);
+      this.ctx.fillStyle = '#000000';
+      this.ctx.font = 'bold 16px PT Mono';
+
+      // Преобразование введенной строки текста в массив
+      var textArray = text.split(' ');
+
+      // Отрисовка текста на одной строчке
+      var currentWidth = 0;
+      var spaceWidth = this.ctx.measureText(' ').width;
+      for (var i = 0; i < textArray.length; i++) {
+        currentWidth += this.ctx.measureText(textArray[i]).width;
+        // Рисуем текст, пока он влазит в ширину прямоугольника
+        if (currentWidth < (parameters.width - 40)) {
+          this.ctx.fillText(textArray[i], parameters.left + 20 + currentWidth - this.ctx.measureText(textArray[i]).width, parameters.top + 30);
+        } else {
+          // Переход на следующую строчку
+          parameters.top += 20;
+          this.ctx.fillText(textArray[i], parameters.left + 20, parameters.top + 30);
+          currentWidth = this.ctx.measureText(textArray[i]).width;
+        }
+        currentWidth += spaceWidth;
+      }
+    },
+
     /**
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          this._drawMessage('Поздравляем! Уровень пройден успешно. Для продолжения игры нажмите пробел.');
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          this._drawMessage('К сожалению, вы проиграли... Нажмите пробел для рестарта.');
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          this._drawMessage('Вы поставили игру на паузу. Для возобновления игры нажмите пробел.');
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          this._drawMessage('Я умею ходить вперед-назад и летать! Нажимай на стрелки! А еще я стреляю файрболом. Нажимай на shift!');
           break;
       }
     },
