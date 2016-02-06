@@ -87,37 +87,9 @@
     }
   }
 
-  form.onsubmit = function(evt) {
-    evt.preventDefault();
-    // Проверка заполнения поля Имя
-    if (!formName.value) {
-      formSubmitButton.setAttribute('disabled', 'disabled');
-      formFieldsName.style.display = '';
-    } else {
-      formFieldsName.style.display = 'none';
-      // Проверка заполнения поля Описание
-      if (!formText.value) {
-        for (i = 0; i < formMark.length; i++) {
-          if (formMark[i].checked) {
-            if (formMark[i].value > 2) {
-              formSubmitButton.removeAttribute('disabled');
-              formFieldsText.style.display = 'none';
-              formFields.style.display = 'none';
-              form.submit();
-            } else {
-              formSubmitButton.setAttribute('disabled', 'disabled');
-              formFieldsText.style.display = '';
-              formFields.style.display = '';
-            }
-          }
-        }
-      } else {
-        formSubmitButton.removeAttribute('disabled');
-        formFieldsText.style.display = 'none';
-        formFields.style.display = 'none';
-        form.submit();
-      }
-    }
+  form.onsubmit = function() {
+    checkFormFields();
+    form.submit();
   };
 
   formName.oninput = function() {
