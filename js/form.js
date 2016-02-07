@@ -87,11 +87,6 @@
     }
   }
 
-  form.onsubmit = function() {
-    checkFormFields();
-    form.submit();
-  };
-
   formName.oninput = function() {
     checkFormFields();
   };
