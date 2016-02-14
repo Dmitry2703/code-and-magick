@@ -1,23 +1,46 @@
 'use strict';
 
 (function() {
-  /* global reviews */
+  var loadedReviews = [];
 
-  // Скрываем блок с фильтром отзывов
+  // Скрытие блока с фильтром отзывов
   var reviewsFilter = document.querySelector('.reviews-filter');
   reviewsFilter.classList.add('invisible');
 
-  reviews.forEach(function(review) {
-    var reviewsList = document.querySelector('.reviews-list');
-    var element = getElementFromTemplate(review);
+  // Отображение прелоадера во время загрузки списка отзывов
+  var reviewsBlock = document.querySelector('.reviews');
+  reviewsBlock.classList.add('reviews-list-loading');
 
-    // Добавляем отзывы в блок reviewsList
-    reviewsList.appendChild(element);
+  getReviews();
 
-    // Показываем блок с фильтром отзывов
-    reviewsFilter.classList.remove('invisible');
-  });
+  /**
+   * Загрузка списка отзывов
+   */
+  function getReviews() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '//o0.github.io/assets/json/reviews.json');
+    xhr.timeout = 10000;
+    xhr.onload = function(evt) {
+      loadedReviews = JSON.parse(evt.target.response);
+      renderReviews(loadedReviews);
+      reviewsBlock.classList.remove('reviews-list-loading');
+    };
+    xhr.onerror = function() {
+      reviewsBlock.classList.remove('reviews-list-loading');
+      reviewsBlock.classList.add('reviews-load-failure');
+    };
+    xhr.ontimeout = function() {
+      reviewsBlock.classList.remove('reviews-list-loading');
+      reviewsBlock.classList.add('reviews-load-failure');
+    };
+    xhr.send();
+  }
 
+  /**
+   * Создание отзыва из шаблона
+   * @param {object} data
+   * @return {element}
+   */
   function getElementFromTemplate(data) {
     var template = document.querySelector('#review-template');
     if ('content' in template) {
@@ -26,10 +49,10 @@
       element = template.querySelector('.review').cloneNode(true);
     }
 
-    // Выводим текст отзыва
+    // Вывод текста отзыва
     element.querySelector('.review-text').textContent = data.description;
 
-    // Выводим рейтинг
+    // Вывод рейтинга
     var rating = data.rating;
     var ratingMark = '';
     switch (rating) {
@@ -48,7 +71,7 @@
     }
     element.querySelector('.review-rating').classList.add('review-rating-' + ratingMark);
 
-    // Загружаем изображения
+    // Загрузка изображений
     var reviewImage = new Image(124, 124);
     reviewImage.onload = function() {
       clearTimeout(imageLoadTimeout);
@@ -68,10 +91,81 @@
       element.classList.add('review-load-failure');
     }, IMAGE_TIMEOUT);
 
-    // Записываем имя автора в атрибуты alt и title незагрузившейся картинки
+    // Запись имени автора в атрибуты alt и title незагрузившейся картинки
     element.querySelector('.review-author').setAttribute('alt', data.author.name);
     element.querySelector('.review-author').setAttribute('title', data.author.name);
 
     return element;
+  }
+
+  /**
+   * Отрисовка списка отзывов
+   * @param {Array.<Object>} reviews
+   */
+  function renderReviews(reviews) {
+    var reviewsList = document.querySelector('.reviews-list');
+    reviewsList.innerHTML = '';
+    var fragment = document.createDocumentFragment();
+    reviews.forEach(function(review) {
+      var element = getElementFromTemplate(review);
+
+      // Добавление отзывов в фрагмент
+      fragment.appendChild(element);
+    });
+
+    // Добавление отзывов в блок .reviews-list
+    reviewsList.appendChild(fragment);
+
+    // Отображение блока с фильтром отзывов
+    reviewsFilter.classList.remove('invisible');
+  }
+
+  // Выбор фильтра
+  var filters = document.querySelectorAll('input[name="reviews"]');
+  for (var i = 0; i < filters.length; i++) {
+    filters[i].onclick = function(evt) {
+      var clickedElementID = evt.target.id;
+      setActiveFilter(clickedElementID);
+    };
+  }
+
+  /**
+   * Установка выбранного фильтра
+   * @param {string} id
+   */
+  function setActiveFilter(id) {
+    var filteredReviews = loadedReviews.slice(0);
+    switch (id) {
+      case 'reviews-all':
+        filteredReviews = loadedReviews;
+        break;
+      case 'reviews-recent':
+        filteredReviews = filteredReviews.filter(function(item) {
+          return Date.parse(item.date) > (Date.now() - 14 * 24 * 60 * 60 * 1000);
+        }).sort(function(a, b) {
+          return Date.parse(b.date) - Date.parse(a.date);
+        });
+        break;
+      case 'reviews-good':
+        filteredReviews = filteredReviews.filter(function(item) {
+          return item.rating > 2;
+        }).sort(function(a, b) {
+          return b.rating - a.rating;
+        });
+        break;
+      case 'reviews-bad':
+        filteredReviews = filteredReviews.filter(function(item) {
+          return item.rating < 3;
+        }).sort(function(a, b) {
+          return a.rating - b.rating;
+        });
+        break;
+      case 'reviews-popular':
+        filteredReviews = filteredReviews.sort(function(a, b) {
+          return b.review_usefulness - a.review_usefulness;
+        });
+        break;
+    }
+    renderReviews(filteredReviews);
   }
 })();
