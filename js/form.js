@@ -26,22 +26,13 @@
   // Кнопка отправки формы заблокирована, так как поле Имя не заполнено
   formSubmitButton.setAttribute('disabled', 'disabled');
   // Ссылка на поле Описание отображается, если оценка ниже 3
-  if (isReviewRequired() === true) {
-    formFieldsText.style.display = '';
-  } else {
-    formFieldsText.style.display = 'none';
-  }
+  formFieldsText.style.display = isReviewRequired() ? '' : 'none';
 
   /**
    * Проверка необходимости заполнения отзыва
   */
   function isReviewRequired() {
-    var formMark = document.querySelector('input[name="review-mark"]:checked');
-    if (formMark.value < 3) {
-      return true;
-    } else {
-      return false;
-    }
+    return document.querySelector('input[name="review-mark"]:checked').value < 3;
   }
 
   /**
@@ -54,7 +45,7 @@
       formFieldsName.style.display = '';
       formFields.style.display = '';
       // Ссылка на поле Описание отображается/скрывается при незаполненном поле Имя
-      if (isReviewRequired() === true) {
+      if (isReviewRequired()) {
         formFieldsText.style.display = '';
         // Если оценка ниже 3, но поле Описание заполнено, то ссылка на поле Описание
         // отображается/скрывается при незаполненном поле Имя
@@ -68,17 +59,10 @@
     } else {
       formFieldsName.style.display = 'none';
       // Поле Описание не заполнено
-      if (!formText.value) {
-        if (isReviewRequired() === true) {
-          formSubmitButton.setAttribute('disabled', 'disabled');
-          formFieldsText.style.display = '';
-          formFields.style.display = '';
-        } else {
-          formSubmitButton.removeAttribute('disabled');
-          formFieldsText.style.display = 'none';
-          formFields.style.display = 'none';
-        }
-      // Поле Описание заполнено
+      if (!formText.value && isReviewRequired()) {
+        formSubmitButton.setAttribute('disabled', 'disabled');
+        formFieldsText.style.display = '';
+        formFields.style.display = '';
       } else {
         formSubmitButton.removeAttribute('disabled');
         formFieldsText.style.display = 'none';
@@ -91,8 +75,5 @@
 
   formText.oninput = checkFormFields;
 
-  formMarkGroup.onchange = function() {
-    isReviewRequired();
-    checkFormFields();
-  };
+  formMarkGroup.onchange = checkFormFields;
 })();
