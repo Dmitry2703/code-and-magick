@@ -31,26 +31,31 @@
 
     // Выводим рейтинг
     var rating = data.rating;
+    var ratingMark = '';
     switch (rating) {
       case 2:
-        element.querySelector('.review-rating').classList.add('review-rating-two');
+        ratingMark = 'two';
         break;
       case 3:
-        element.querySelector('.review-rating').classList.add('review-rating-three');
+        ratingMark = 'three';
         break;
       case 4:
-        element.querySelector('.review-rating').classList.add('review-rating-four');
+        ratingMark = 'four';
         break;
       case 5:
-        element.querySelector('.review-rating').classList.add('review-rating-five');
+        ratingMark = 'five';
         break;
     }
+    element.querySelector('.review-rating').classList.add('review-rating-' + ratingMark);
 
     // Загружаем изображения
-    var reviewImage = new Image();
+    var reviewImage = new Image(124, 124);
     reviewImage.onload = function() {
       clearTimeout(imageLoadTimeout);
-      element.querySelector('.review-author').setAttribute('src', reviewImage.src);
+      reviewImage.classList.add('review-author');
+      reviewImage.setAttribute('alt', data.author.name);
+      reviewImage.setAttribute('title', data.author.name);
+      element.replaceChild(reviewImage, element.querySelector('.review-author'));
     };
     reviewImage.onerror = function() {
       element.classList.add('review-load-failure');
@@ -63,7 +68,7 @@
       element.classList.add('review-load-failure');
     }, IMAGE_TIMEOUT);
 
-    // Записываем имя автора в атрибуты alt и title соответствующей картинки
+    // Записываем имя автора в атрибуты alt и title незагрузившейся картинки
     element.querySelector('.review-author').setAttribute('alt', data.author.name);
     element.querySelector('.review-author').setAttribute('title', data.author.name);
 
