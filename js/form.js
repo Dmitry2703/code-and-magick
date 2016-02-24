@@ -1,6 +1,7 @@
 'use strict';
 
 (function() {
+  var form = document.querySelector('.review-form');
   var formContainer = document.querySelector('.overlay-container');
   var formOpenButton = document.querySelector('.reviews-controls-new');
   var formCloseButton = document.querySelector('.review-form-close');
@@ -8,6 +9,7 @@
   var formText = document.querySelector('.review-form-field-text');
   var formSubmitButton = document.querySelector('.review-submit');
   var formMarkGroup = document.querySelector('.review-form-group-mark');
+  var formMark = document.querySelectorAll('input[name="review-mark"]');
   var formFields = document.querySelector('.review-fields');
   var formFieldsName = document.querySelector('.review-fields-name');
   var formFieldsText = document.querySelector('.review-fields-text');
@@ -23,8 +25,16 @@
   };
 
   // Начальные условия
-  // Кнопка отправки формы заблокирована, так как поле Имя не заполнено
-  formSubmitButton.setAttribute('disabled', 'disabled');
+  /* global docCookies */
+  // Подстановка значения поля Имя из cookies
+  formName.value = docCookies.getItem('name');
+  // Подстановка значения Оценка из cookies
+  var formMarkFromCookies = docCookies.getItem('mark');
+  for (var i = 0; i < formMark.length; i++) {
+    if (formMark[i].value === formMarkFromCookies) {
+      formMark[i].setAttribute('checked', 'checked');
+    }
+  }
   // Ссылка на поле Описание отображается, если оценка ниже 3
   formFieldsText.style.display = isReviewRequired() ? '' : 'none';
 
@@ -71,9 +81,33 @@
     }
   }
 
+  // Валидация при открытии формы
+  checkFormFields();
+
   formName.oninput = checkFormFields;
 
   formText.oninput = checkFormFields;
 
   formMarkGroup.onchange = checkFormFields;
+
+  // Сохранение оценки и имени пользователя в cookies при отправке формы
+  form.onsubmit = function(evt) {
+    evt.preventDefault();
+    // Срок жизни Cookies - количество дней с прошедшего дня рождения
+    var lastBirthdayDate = new Date('2015-03-27');
+    var todayDate = new Date();
+    var lastBirthdayYear = lastBirthdayDate.getFullYear();
+    var todayYear = todayDate.getFullYear();
+    var deltaYear = todayYear - lastBirthdayYear;
+    if (deltaYear === 0) {
+      var daysToExpire = Math.round((todayDate - lastBirthdayDate) / 1000 / 60 / 60 / 24);
+    } else {
+      daysToExpire = Math.round((todayDate - lastBirthdayDate) / 1000 / 60 / 60 / 24 - (deltaYear - 1) * 365);
+    }
+
+    var dateToExpire = Date.now() + daysToExpire * 24 * 60 * 60 * 1000;
+    docCookies.setItem('name', formName.value, dateToExpire);
+    docCookies.setItem('mark', document.querySelector('input[name="review-mark"]:checked').value, dateToExpire);
+    form.submit();
+  };
 })();
