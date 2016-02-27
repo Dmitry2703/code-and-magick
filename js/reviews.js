@@ -21,9 +21,9 @@
   function getElementFromTemplate(data) {
     var template = document.querySelector('#review-template');
     if ('content' in template) {
-      var element = template.content.children[0].cloneNode(true);
+      var element = template.content.querySelector('.review').cloneNode(true);
     } else {
-      element = template.children[0].cloneNode(true);
+      element = template.querySelector('.review').cloneNode(true);
     }
 
     // Выводим текст отзыва
