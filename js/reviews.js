@@ -2,6 +2,9 @@
 
 (function() {
   var loadedReviews = [];
+  var filteredReviews = [];
+  var currentPage = 0;
+  var PAGE_SIZE = 3;
 
   // Скрытие блока с фильтром отзывов
   var reviewsFilter = document.querySelector('.reviews-filter');
@@ -22,7 +25,8 @@
     xhr.timeout = 10000;
     xhr.onload = function(evt) {
       loadedReviews = JSON.parse(evt.target.response);
-      renderReviews(loadedReviews);
+      renderReviews(loadedReviews, 0);
+      filteredReviews = loadedReviews.slice(PAGE_SIZE);
       reviewsBlock.classList.remove('reviews-list-loading');
     };
     xhr.onerror = function() {
@@ -102,11 +106,19 @@
    * Отрисовка списка отзывов
    * @param {Array.<Object>} reviews
    */
-  function renderReviews(reviews) {
+  function renderReviews(reviews, pageNumber, replace) {
     var reviewsList = document.querySelector('.reviews-list');
-    reviewsList.innerHTML = '';
+    if (replace) {
+      reviewsList.innerHTML = '';
+    }
     var fragment = document.createDocumentFragment();
-    reviews.forEach(function(review) {
+
+    // Постраничное отображение отзывов
+    var from = pageNumber * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+    var pageReviews = reviews.slice(from, to);
+
+    pageReviews.forEach(function(review) {
       var element = getElementFromTemplate(review);
 
       // Добавление отзывов в фрагмент
@@ -118,23 +130,31 @@
 
     // Отображение блока с фильтром отзывов
     reviewsFilter.classList.remove('invisible');
+
+    // Отображение кнопки "Еще отзывы"
+    reviewsMoreButton.classList.remove('invisible');
+    // Общее количество страниц с отзывами
+    var totalPages = Math.round(reviews.length / PAGE_SIZE);
+    if (currentPage === totalPages) {
+      reviewsMoreButton.classList.add('invisible');
+    }
   }
 
   // Выбор фильтра
-  var filters = document.querySelectorAll('input[name="reviews"]');
-  for (var i = 0; i < filters.length; i++) {
-    filters[i].onclick = function(evt) {
-      var clickedElementID = evt.target.id;
-      setActiveFilter(clickedElementID);
-    };
-  }
+  var filters = document.querySelector('.reviews-filter');
+  filters.addEventListener('click', function(evt) {
+    var clickedElement = evt.target;
+    if (clickedElement.hasAttribute('name')) {
+      setActiveFilter(clickedElement.id);
+    }
+  });
 
   /**
    * Установка выбранного фильтра
    * @param {string} id
    */
   function setActiveFilter(id) {
-    var filteredReviews = loadedReviews.slice(0);
+    filteredReviews = loadedReviews.slice(0);
     switch (id) {
       case 'reviews-all':
         filteredReviews = loadedReviews;
@@ -166,6 +186,12 @@
         });
         break;
     }
-    renderReviews(filteredReviews);
+    currentPage = 0;
+    renderReviews(filteredReviews, currentPage++, true);
   }
+
+  var reviewsMoreButton = document.querySelector('.reviews-controls-more');
+  reviewsMoreButton.addEventListener('click', function() {
+    renderReviews(filteredReviews, currentPage++);
+  });
 })();
