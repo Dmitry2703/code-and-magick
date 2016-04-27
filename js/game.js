@@ -716,6 +716,34 @@
     }
   };
 
+  /**
+   * Движение облаков при скролле
+   */
+  var scrollTimeout;
+
+  window.addEventListener('scroll', function() {
+    var clouds = document.querySelector('.header-clouds');
+    var cloudsCoordinates = clouds.getBoundingClientRect();
+
+    /**
+     * Проверка видимости блока с облаками
+    */
+    function isCloudsVisible() {
+      return (-cloudsCoordinates.top <= cloudsCoordinates.height);
+    }
+
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      // Проверка видимости блока с облаками не чаще 1 раза в 100мс
+      isCloudsVisible();
+      console.log(cloudsCoordinates.top);
+    }, 100);
+    // Смещаем облака только, если блок с облаками виден
+    if (isCloudsVisible()) {
+      clouds.style.backgroundPosition = -cloudsCoordinates.top + 'px ' + '0px';
+    }
+  });
+
   window.Game = Game;
   window.Game.Verdict = Verdict;
 
