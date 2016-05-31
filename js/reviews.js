@@ -1,3 +1,5 @@
+/* global Review: true */
+
 'use strict';
 
 (function() {
@@ -41,68 +43,6 @@
   }
 
   /**
-   * Создание отзыва из шаблона
-   * @param {object} data
-   * @return {element}
-   */
-  function getElementFromTemplate(data) {
-    var template = document.querySelector('#review-template');
-    if ('content' in template) {
-      var element = template.content.querySelector('.review').cloneNode(true);
-    } else {
-      element = template.querySelector('.review').cloneNode(true);
-    }
-
-    // Вывод текста отзыва
-    element.querySelector('.review-text').textContent = data.description;
-
-    // Вывод рейтинга
-    var rating = data.rating;
-    var ratingMark = '';
-    switch (rating) {
-      case 2:
-        ratingMark = 'two';
-        break;
-      case 3:
-        ratingMark = 'three';
-        break;
-      case 4:
-        ratingMark = 'four';
-        break;
-      case 5:
-        ratingMark = 'five';
-        break;
-    }
-    element.querySelector('.review-rating').classList.add('review-rating-' + ratingMark);
-
-    // Загрузка изображений
-    var reviewImage = new Image(124, 124);
-    reviewImage.onload = function() {
-      clearTimeout(imageLoadTimeout);
-      reviewImage.classList.add('review-author');
-      reviewImage.setAttribute('alt', data.author.name);
-      reviewImage.setAttribute('title', data.author.name);
-      element.replaceChild(reviewImage, element.querySelector('.review-author'));
-    };
-    reviewImage.onerror = function() {
-      element.classList.add('review-load-failure');
-    };
-    reviewImage.src = data.author.picture;
-
-    var IMAGE_TIMEOUT = 10000;
-    var imageLoadTimeout = setTimeout(function() {
-      element.querySelector('.review-author').setAttribute('src', '');
-      element.classList.add('review-load-failure');
-    }, IMAGE_TIMEOUT);
-
-    // Запись имени автора в атрибуты alt и title незагрузившейся картинки
-    element.querySelector('.review-author').setAttribute('alt', data.author.name);
-    element.querySelector('.review-author').setAttribute('title', data.author.name);
-
-    return element;
-  }
-
-  /**
    * Отрисовка списка отзывов
    * @param {Array.<Object>} reviews
    */
@@ -119,10 +59,11 @@
     var pageReviews = reviews.slice(from, to);
 
     pageReviews.forEach(function(review) {
-      var element = getElementFromTemplate(review);
+      var reviewElement = new Review(review);
+      reviewElement.render();
 
       // Добавление отзывов в фрагмент
-      fragment.appendChild(element);
+      fragment.appendChild(reviewElement.element);
     });
 
     // Добавление отзывов в блок .reviews-list
