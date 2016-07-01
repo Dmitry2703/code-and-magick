@@ -1,3 +1,5 @@
+'use strict';
+
 (function() {
   /**
   * @param {Object} data

@@ -1,4 +1,4 @@
-/* global Review: true, Gallery: true */
+/* global Review: true */
 
 'use strict';
 
@@ -7,7 +7,6 @@
   var filteredReviews = [];
   var currentPage = 0;
   var PAGE_SIZE = 3;
-  var gallery = new Gallery();
 
   // Скрытие блока с фильтром отзывов
   var reviewsFilter = document.querySelector('.reviews-filter');
@@ -136,20 +135,4 @@
   reviewsMoreButton.addEventListener('click', function() {
     renderReviews(filteredReviews, currentPage++);
   });
-
-  // Показ фотогалереи
-  var photogallery = document.querySelector('.photogallery');
-  photogallery.addEventListener('click', _onClick);
-
-  /**
-   * Обработчик клика по фотографиям
-   * @param {Event} evt
-   */
-  function _onClick(evt) {
-    var clickedElement = evt.target.parentElement; // нужна ссылка, а не картинка
-    if (clickedElement.classList.contains('photogallery-image')) {
-      evt.preventDefault();
-      gallery.show();
-    }
-  }
 })();

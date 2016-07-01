@@ -9,6 +9,11 @@
     this._closeButton = this.element.querySelector('.overlay-gallery-close');
     this._leftControl = this.element.querySelector('.overlay-gallery-control-left');
     this._rightControl = this.element.querySelector('.overlay-gallery-control-right');
+    this._preview = this.element.querySelector('.overlay-gallery-preview');
+    this._currentNumber = this.element.querySelector('.preview-number-current');
+    this._totalNumber = this.element.querySelector('.preview-number-total');
+    this._currentNumber.innerHTML = 0;
+    this._totalNumber.innerHTML = 0;
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onLeftControlClick = this._onLeftControlClick.bind(this);
@@ -59,8 +64,17 @@
     * @private
     */
     _onDocumentKeyDown: function(evt) {
+      // ESC
       if (evt.keyCode === 27) {
         this.hide();
+      }
+      // стрелка влево
+      if (evt.keyCode === 37) {
+        this._onLeftControlClick();
+      }
+      // стрелка вправо
+      if (evt.keyCode === 39) {
+        this._onRightControlClick();
       }
     },
 
@@ -69,7 +83,9 @@
     * @private
     */
     _onLeftControlClick: function() {
-      console.log('Влево!');
+      if (this._currentNumber.innerHTML > 1) {
+        this.setCurrentPicture(this._currentNumber.innerHTML - 2);
+      }
     },
 
     /**
@@ -77,7 +93,31 @@
     * @private
     */
     _onRightControlClick: function() {
-      console.log('Вправо!');
+      if (this._currentNumber.innerHTML < this.photo.length) {
+        this.setCurrentPicture(this._currentNumber.innerHTML++);
+      }
+    },
+
+    /**
+    * Добавление фотографий в галерею
+    */
+    setPictures: function(photo) {
+      this.photo = photo;
+    },
+
+    /*
+    * Показ текущей фотографии
+    */
+    setCurrentPicture: function(number) {
+      var photoImage = new Image(302, 302);
+      photoImage.src = this.photo[number].src;
+      if (this._preview.querySelectorAll('img').length === 0) {
+        this._preview.appendChild(photoImage);
+      } else {
+        this._preview.replaceChild(photoImage, this._preview.querySelector('img'));
+      }
+      this._currentNumber.innerHTML = number + 1;
+      this._totalNumber.innerHTML = this.photo.length;
     }
   };
 
