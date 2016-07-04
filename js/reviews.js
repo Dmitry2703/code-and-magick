@@ -74,6 +74,7 @@
 
     // Отображение кнопки "Еще отзывы"
     reviewsMoreButton.classList.remove('invisible');
+
     // Общее количество страниц с отзывами
     var totalPages = Math.round(reviews.length / PAGE_SIZE);
     if (currentPage === totalPages) {
@@ -129,6 +130,11 @@
     }
     currentPage = 0;
     renderReviews(filteredReviews, currentPage++, true);
+
+    // Скрытие кнопки "Еще отзывы", если фильтрованных отзывов меньше размера страницы PAGE_SIZE
+    if (filteredReviews.length < (PAGE_SIZE + 1)) {
+      reviewsMoreButton.classList.add('invisible');
+    }
   }
 
   var reviewsMoreButton = document.querySelector('.reviews-controls-more');
