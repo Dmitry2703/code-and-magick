@@ -2,17 +2,20 @@
 
 (function() {
   /**
-  * @param {Object} data
   * @constructor
   */
-  function Review(data) {
+  var ReviewBase = function() {};
+
+  ReviewBase.prototype._data = null;
+
+  ReviewBase.prototype.setData = function(data) {
     this._data = data;
-  }
+  };
 
   /**
   * Отрисовка элемента отзыва в списке
   */
-  Review.prototype.render = function() {
+  ReviewBase.prototype.render = function() {
     var template = document.querySelector('#review-template');
     if ('content' in template) {
       this.element = template.content.querySelector('.review').cloneNode(true);
@@ -21,10 +24,10 @@
     }
 
     // Вывод текста отзыва
-    this.element.querySelector('.review-text').textContent = this._data.description;
+    this.element.querySelector('.review-text').textContent = this._data.getDescription();
 
     // Вывод рейтинга
-    var rating = this._data.rating;
+    var rating = this._data.getRating();
     var ratingMark = '';
     switch (rating) {
       case 2:
@@ -47,14 +50,14 @@
     reviewImage.onload = function() {
       clearTimeout(imageLoadTimeout);
       reviewImage.classList.add('review-author');
-      reviewImage.setAttribute('alt', this._data.author.name);
-      reviewImage.setAttribute('title', this._data.author.name);
+      reviewImage.setAttribute('alt', this._data.getAuthor());
+      reviewImage.setAttribute('title', this._data.getAuthor());
       this.element.replaceChild(reviewImage, this.element.querySelector('.review-author'));
     }.bind(this);
     reviewImage.onerror = function() {
       this.element.classList.add('review-load-failure');
     }.bind(this);
-    reviewImage.src = this._data.author.picture;
+    reviewImage.src = this._data.getImage();
 
     var IMAGE_TIMEOUT = 10000;
     var imageLoadTimeout = setTimeout(function() {
@@ -63,10 +66,10 @@
     }, IMAGE_TIMEOUT);
 
     // Запись имени автора в атрибуты alt и title незагрузившейся картинки
-    this.element.querySelector('.review-author').setAttribute('alt', this._data.author.name);
-    this.element.querySelector('.review-author').setAttribute('title', this._data.author.name);
+    this.element.querySelector('.review-author').setAttribute('alt', this._data.getAuthor());
+    this.element.querySelector('.review-author').setAttribute('title', this._data.getAuthor());
   };
 
   // экспорт модуля в глобальную область видимости
-  window.Review = Review;
+  window.ReviewBase = ReviewBase;
 })();

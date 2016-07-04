@@ -1,4 +1,4 @@
-/* global Review: true */
+/* global ReviewBase, ReviewData: true */
 
 'use strict';
 
@@ -27,6 +27,11 @@
     xhr.timeout = 10000;
     xhr.onload = function(evt) {
       loadedReviews = JSON.parse(evt.target.response);
+      // массив объектов с данными типа ReviewData
+      loadedReviews = loadedReviews.map(function(review) {
+        return new ReviewData(review);
+      });
+
       renderReviews(loadedReviews, 0);
       filteredReviews = loadedReviews.slice(PAGE_SIZE);
       reviewsBlock.classList.remove('reviews-list-loading');
@@ -59,7 +64,8 @@
     var pageReviews = reviews.slice(from, to);
 
     pageReviews.forEach(function(review) {
-      var reviewElement = new Review(review);
+      var reviewElement = new ReviewBase(review);
+      reviewElement.setData(review);
       reviewElement.render();
 
       // Добавление отзывов в фрагмент
@@ -102,28 +108,28 @@
         break;
       case 'reviews-recent':
         filteredReviews = filteredReviews.filter(function(item) {
-          return Date.parse(item.date) > (Date.now() - 14 * 24 * 60 * 60 * 1000);
+          return Date.parse(item.getDate()) > (Date.now() - 14 * 24 * 60 * 60 * 1000);
         }).sort(function(a, b) {
-          return Date.parse(b.date) - Date.parse(a.date);
+          return Date.parse(b.getDate()) - Date.parse(a.getDate());
         });
         break;
       case 'reviews-good':
         filteredReviews = filteredReviews.filter(function(item) {
-          return item.rating > 2;
+          return item.getRating() > 2;
         }).sort(function(a, b) {
-          return b.rating - a.rating;
+          return b.getRating() - a.getRating();
         });
         break;
       case 'reviews-bad':
         filteredReviews = filteredReviews.filter(function(item) {
-          return item.rating < 3;
+          return item.getRating() < 3;
         }).sort(function(a, b) {
-          return a.rating - b.rating;
+          return a.getRating() - b.getRating();
         });
         break;
       case 'reviews-popular':
         filteredReviews = filteredReviews.sort(function(a, b) {
-          return b.review_usefulness - a.review_usefulness;
+          return b.getUsefulness() - a.getUsefulness();
         });
         break;
     }
