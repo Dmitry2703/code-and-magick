@@ -109,7 +109,7 @@
     * Показ текущей фотографии
     */
     setCurrentPicture: function(number) {
-      var photoImage = new Image(302, 302);
+      var photoImage = new Image();
       photoImage.src = this.photo[number].src;
       if (this._preview.querySelectorAll('img').length === 0) {
         this._preview.appendChild(photoImage);
