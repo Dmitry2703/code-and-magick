@@ -14,12 +14,14 @@
   "homepage": "https://github.com/htmlacademy-javascript/57333-code-and-magick",
   "dependencies": {
     "eslint": "^1.10.3",
-    "http-server": "^0.8.5"
+    "eslint-plugin-requirejs": "",
+    "webpack": "",
+    "webpack-dev-server": ""
   },
   "scripts": {
     "gosha": "make",
     "test": "eslint js/",
-    "start": "http-server ."
+    "start": "webpack-dev-server --watch --config config/webpack.config.js"
   },
   "engines": {
     "node": "^5.0.0"

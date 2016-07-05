@@ -1,12 +1,10 @@
 'use strict';
 
-(function() {
-  /**
-  * @constructor
-  */
-  function Photo(src) {
-    this.src = src;
-  }
+/**
+* @constructor
+*/
+function Photo(src) {
+  this.src = src;
+}
 
-  window.Photo = Photo;
-})();
+module.exports = Photo;
