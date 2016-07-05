@@ -1,5 +1,6 @@
 gosha/
 node_modules/
+out/
 .DS_Store
 Thumbs.db
 .idea

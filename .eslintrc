@@ -4,8 +4,15 @@ env:
   browser: true
   node: true
 
+globals:
+  define: true
+
 extends:
   "eslint:recommended"
+
+plugins: [
+  "requirejs"
+]
 
 rules:
   indent: [2, 2, {SwitchCase: 1}]
@@ -77,6 +84,12 @@ rules:
   space-unary-ops: [2, {words: true, nonwords: false}]
   strict: [2, "global"]
   yoda: [2, "never"]
+
+  requirejs/no-invalid-define: 2
+  requirejs/no-multiple-define: 2
+  requirejs/no-named-define: 2
+  requirejs/no-commonjs-wrapper: 2
+  requirejs/no-object-define: 1
 
   # Previously on by default in node environment
   no-catch-shadow: 0
