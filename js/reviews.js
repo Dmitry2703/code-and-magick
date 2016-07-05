@@ -1,6 +1,7 @@
 'use strict';
 
-var Review = require('./review');
+var ReviewData = require('./review-data');
+var ReviewBase = require('./review-base');
 
 var loadedReviews = [];
 var filteredReviews = [];
@@ -27,6 +28,10 @@ function getReviews() {
   xhr.timeout = 10000;
   xhr.onload = function(evt) {
     loadedReviews = JSON.parse(evt.target.response);
+    // массив объектов с данными типа ReviewData
+    loadedReviews = loadedReviews.map(function(review) {
+      return new ReviewData(review);
+    });
     setActiveFilter(activeFilter);
     reviewsBlock.classList.remove('reviews-list-loading');
   };
@@ -58,7 +63,8 @@ function renderReviews(reviews, pageNumber, replace) {
   var pageReviews = reviews.slice(from, to);
 
   pageReviews.forEach(function(review) {
-    var reviewElement = new Review(review);
+    var reviewElement = new ReviewBase(review);
+    reviewElement.setData(review);
     reviewElement.render();
 
     // Добавление отзывов в фрагмент
@@ -73,7 +79,6 @@ function renderReviews(reviews, pageNumber, replace) {
 
   // Отображение кнопки "Еще отзывы"
   reviewsMoreButton.classList.remove('invisible');
-
   // Общее количество страниц с отзывами
   var totalPages = Math.round(reviews.length / PAGE_SIZE);
   if (currentPage === totalPages) {
@@ -102,28 +107,28 @@ function setActiveFilter(id) {
       break;
     case 'reviews-recent':
       filteredReviews = filteredReviews.filter(function(item) {
-        return Date.parse(item.date) > (Date.now() - 14 * 24 * 60 * 60 * 1000);
+        return Date.parse(item.getDate()) > (Date.now() - 14 * 24 * 60 * 60 * 1000);
       }).sort(function(a, b) {
-        return Date.parse(b.date) - Date.parse(a.date);
+        return Date.parse(b.getDate()) - Date.parse(a.getDate());
       });
       break;
     case 'reviews-good':
       filteredReviews = filteredReviews.filter(function(item) {
-        return item.rating > 2;
+        return item.getRating() > 2;
       }).sort(function(a, b) {
-        return b.rating - a.rating;
+        return b.getRating() - a.getRating();
       });
       break;
     case 'reviews-bad':
       filteredReviews = filteredReviews.filter(function(item) {
-        return item.rating < 3;
+        return item.getRating() < 3;
       }).sort(function(a, b) {
-        return a.rating - b.rating;
+        return a.getRating() - b.getRating();
       });
       break;
     case 'reviews-popular':
       filteredReviews = filteredReviews.sort(function(a, b) {
-        return b.review_usefulness - a.review_usefulness;
+        return b.getUsefulness() - a.getUsefulness();
       });
       break;
   }
