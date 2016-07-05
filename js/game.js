@@ -736,7 +736,6 @@
     scrollTimeout = setTimeout(function() {
       // Проверка видимости блока с облаками не чаще 1 раза в 100мс
       isCloudsVisible();
-      console.log(cloudsCoordinates.top);
     }, 100);
     // Смещаем облака только, если блок с облаками виден
     if (isCloudsVisible()) {

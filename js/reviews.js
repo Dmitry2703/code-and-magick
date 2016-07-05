@@ -7,6 +7,7 @@
   var filteredReviews = [];
   var currentPage = 0;
   var PAGE_SIZE = 3;
+  var activeFilter = localStorage.getItem('activeFilter') || 'reviews-all';
 
   // Скрытие блока с фильтром отзывов
   var reviewsFilter = document.querySelector('.reviews-filter');
@@ -27,8 +28,7 @@
     xhr.timeout = 10000;
     xhr.onload = function(evt) {
       loadedReviews = JSON.parse(evt.target.response);
-      renderReviews(loadedReviews, 0);
-      filteredReviews = loadedReviews.slice(PAGE_SIZE);
+      setActiveFilter(activeFilter);
       reviewsBlock.classList.remove('reviews-list-loading');
     };
     xhr.onerror = function() {
@@ -128,6 +128,17 @@
         });
         break;
     }
+
+    var filterItems = filters.querySelectorAll('input[name="reviews"]');
+    filterItems = Array.prototype.slice.call(filterItems);
+
+    filterItems.forEach(function(item) {
+      item.removeAttribute('checked');
+      if (item.id === activeFilter) {
+        item.setAttribute('checked', 'checked');
+      }
+    });
+
     currentPage = 0;
     renderReviews(filteredReviews, currentPage++, true);
 
@@ -135,6 +146,9 @@
     if (filteredReviews.length < (PAGE_SIZE + 1)) {
       reviewsMoreButton.classList.add('invisible');
     }
+
+    activeFilter = id;
+    localStorage.setItem('activeFilter', id);
   }
 
   var reviewsMoreButton = document.querySelector('.reviews-controls-more');
