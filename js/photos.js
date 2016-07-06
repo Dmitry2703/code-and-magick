@@ -1,3 +1,8 @@
+/**
+ * @fileOverview Добавление фотографий в фотогалерею и показ фотогалереи
+ * @author Dmitry Meshcheryakov
+ */
+
 'use strict';
 
 var Photo = require('./photo');

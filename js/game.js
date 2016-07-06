@@ -373,6 +373,11 @@ Game.prototype = {
     }
   },
 
+  /**
+   * Отрисовка экранных сообщений
+   * @param  {string} text
+   * @param  {Object.<string, number>} parameters
+   */
   _drawMessage: function(text, parameters) {
     // Если не заданы параметры, то используются параметры по умолчанию
     if (typeof (parameters) === 'undefined') {
@@ -412,7 +417,7 @@ Game.prototype = {
   },
 
   /**
-   * Отрисовка экрана паузы.
+   * Отрисовка экрана паузы
    */
   _drawPauseScreen: function() {
     switch (this.state.currentStatus) {

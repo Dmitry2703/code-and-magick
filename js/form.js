@@ -1,6 +1,9 @@
-'use strict';
+/**
+ * @fileOverview Валидация формы добавления отзыва
+ * @author Dmitry Meshcheryakov
+ */
 
-require('../lib/cookies');
+'use strict';
 
 var form = document.querySelector('.review-form');
 var formContainer = document.querySelector('.overlay-container');
@@ -15,11 +18,19 @@ var formFields = document.querySelector('.review-fields');
 var formFieldsName = document.querySelector('.review-fields-name');
 var formFieldsText = document.querySelector('.review-fields-text');
 
+/**
+ * Открытие формы
+ * @param  {MouseEvent} evt
+ */
 formOpenButton.onclick = function(evt) {
   evt.preventDefault();
   formContainer.classList.remove('invisible');
 };
 
+/**
+ * Закрытие формы
+ * @param  {MouseEvent} evt
+ */
 formCloseButton.onclick = function(evt) {
   evt.preventDefault();
   formContainer.classList.add('invisible');
@@ -40,14 +51,15 @@ formFieldsText.style.display = isReviewRequired() ? '' : 'none';
 
 /**
  * Проверка необходимости заполнения отзыва
-*/
+ * @return {Boolean}
+ */
 function isReviewRequired() {
   return document.querySelector('input[name="review-mark"]:checked').value < 3;
 }
 
 /**
  * Проверка заполнения обязательных полей
-*/
+ */
 function checkFormFields() {
   // Поле Имя не заполнено
   if (!formName.value) {
@@ -90,7 +102,10 @@ formText.oninput = checkFormFields;
 
 formMarkGroup.onchange = checkFormFields;
 
-// Сохранение оценки и имени пользователя в cookies при отправке формы
+/**
+ * Сохранение оценки и имени пользователя в cookies при отправке формы
+ * @param  {MouseEvent} evt
+ */
 form.onsubmit = function(evt) {
   evt.preventDefault();
   // Срок жизни Cookies - количество дней с прошедшего дня рождения

@@ -1,19 +1,29 @@
+/**
+ * @fileoverview Компонента отзыва
+ * @author Dmitry Meshcheryakov
+ */
+
 'use strict';
 
 /**
-* @constructor
-*/
+ * Конструктор объекта ReviewBase
+ * @constructor
+ */
 var ReviewBase = function() {};
 
 ReviewBase.prototype._data = null;
 
+/**
+ * Получение данных
+ * @param {Object} data
+ */
 ReviewBase.prototype.setData = function(data) {
   this._data = data;
 };
 
 /**
-* Отрисовка элемента отзыва в списке
-*/
+ * Отрисовка элемента отзыва в списке
+ */
 ReviewBase.prototype.render = function() {
   var template = document.querySelector('#review-template');
   if ('content' in template) {
@@ -58,7 +68,9 @@ ReviewBase.prototype.render = function() {
   }.bind(this);
   reviewImage.src = this._data.getImage();
 
+  /** @const {Number} */
   var IMAGE_TIMEOUT = 10000;
+
   var imageLoadTimeout = setTimeout(function() {
     this.element.querySelector('.review-author').setAttribute('src', '');
     this.element.classList.add('review-load-failure');

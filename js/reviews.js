@@ -1,12 +1,42 @@
+/**
+ * @fileOverview Загрузка списка отзывов, отрисовка на странице, фильтрация
+ * @author Dmitry Meshcheryakov
+ */
+
 'use strict';
 
 var ReviewData = require('./review-data');
 var ReviewBase = require('./review-base');
 
+/**
+ * Изначальный список загруженных отзывов. Используется для фильтрации.
+ * @type {Array.<Object>}
+ */
 var loadedReviews = [];
+
+/**
+ * Текущее состояние списка отзывов, учитывающее примененный фильтр и сортировку.
+ * Используется для отрисовки.
+ * @type {Array.<Object>}
+ */
 var filteredReviews = [];
+
+/**
+ * Текущая страница с отзывами
+ * @type {Number}
+ */
 var currentPage = 0;
+
+/**
+ * Кол-во отзывов на одной странице
+ * @const {Number}
+ */
 var PAGE_SIZE = 3;
+
+/**
+ * Активный фильтр (если есть в Local Storage, то берется из него, иначе - фильтр "Все")
+ * @type {string}
+ */
 var activeFilter = localStorage.getItem('activeFilter') || 'reviews-all';
 
 // Скрытие блока с фильтром отзывов
@@ -48,7 +78,9 @@ function getReviews() {
 
 /**
  * Отрисовка списка отзывов
- * @param {Array.<Object>} reviews
+ * @param  {Array.<Object>} reviews
+ * @param  {number} pageNumber
+ * @param  {boolean} replace Если true, то отзывы перерисовываются, иначе отрисовываются друг под другом
  */
 function renderReviews(reviews, pageNumber, replace) {
   var reviewsList = document.querySelector('.reviews-list');

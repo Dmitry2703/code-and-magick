@@ -1,8 +1,14 @@
+/**
+ * @fileOverview Компонента фотогалереи
+ * @author Dmitry Meshcheryakov
+ */
+
 'use strict';
 
 /**
-* @constructor
-*/
+ * Конструктор объекта Gallery
+ * @constructor
+ */
 function Gallery() {
   this.element = document.querySelector('.overlay-gallery');
   this._closeButton = this.element.querySelector('.overlay-gallery-close');
@@ -21,8 +27,8 @@ function Gallery() {
 
 Gallery.prototype = {
   /**
-  * Показ галереи
-  */
+   * Показ галереи
+   */
   show: function() {
     this.element.classList.remove('invisible');
 
@@ -40,8 +46,8 @@ Gallery.prototype = {
   },
 
   /**
-  * Скрытие галереи
-  */
+   * Скрытие галереи
+   */
   hide: function() {
     this.element.classList.add('invisible');
     this._closeButton.removeEventListener('click', this._onCloseClick);
@@ -51,17 +57,18 @@ Gallery.prototype = {
   },
 
   /**
-  * Обработчик клика по крестику
-  * @private
-  */
+   * Обработчик клика по крестику
+   * @private
+   */
   _onCloseClick: function() {
     this.hide();
   },
 
   /**
-  * Обработчик клавиатурных событий
-  * @private
-  */
+   * Обработчик клавиатурных событий
+   * @param  {KeyboardEvent} evt
+   * @private
+   */
   _onDocumentKeyDown: function(evt) {
     // ESC
     if (evt.keyCode === 27) {
@@ -78,9 +85,9 @@ Gallery.prototype = {
   },
 
   /**
-  * Обработчик клика по стрелке влево
-  * @private
-  */
+   * Обработчик клика по стрелке влево
+   * @private
+   */
   _onLeftControlClick: function() {
     if (this._currentNumber.innerHTML > 1) {
       this.setCurrentPicture(this._currentNumber.innerHTML - 2);
@@ -88,9 +95,9 @@ Gallery.prototype = {
   },
 
   /**
-  * Обработчик клика по стрелке вправо
-  * @private
-  */
+   * Обработчик клика по стрелке вправо
+   * @private
+   */
   _onRightControlClick: function() {
     if (this._currentNumber.innerHTML < this.photo.length) {
       this.setCurrentPicture(this._currentNumber.innerHTML++);
@@ -98,15 +105,17 @@ Gallery.prototype = {
   },
 
   /**
-  * Добавление фотографий в галерею
-  */
+   * Добавление фотографий в галерею
+   * @param {Array.<Object>} photo
+   */
   setPictures: function(photo) {
     this.photo = photo;
   },
 
-  /*
-  * Показ текущей фотографии
-  */
+  /**
+   * Показ текущей фотографии
+   * @param {number} number
+   */
   setCurrentPicture: function(number) {
     var photoImage = new Image();
     photoImage.src = this.photo[number].src;
